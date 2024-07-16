@@ -1,0 +1,7 @@
+config:
+  aws:region: us-west-2
+  cicd:errorDocument: error.html
+  cicd:indexDocument: index.html
+  cicd:path: ./www
+environment:
+  - aws-oidc-env
