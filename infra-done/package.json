@@ -1,12 +1,12 @@
 {
     "name": "cicd",
     "devDependencies": {
-        "@types/node": "^20",
-        "typescript": "^5.5.3"
+        "@types/node": "^22",
+        "typescript": "^5.5.4"
     },
     "dependencies": {
-        "@pulumi/aws": "^6.44.0",
+        "@pulumi/aws": "^6.49.0",
         "@pulumi/synced-folder": "^0.11.1",
-        "@pulumi/pulumi": "^3.124.0"
+        "@pulumi/pulumi": "^3.128.0"
     }
 }
