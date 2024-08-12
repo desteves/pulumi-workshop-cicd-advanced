@@ -1,0 +1,3 @@
+config:
+  aws-oidc-done:escEnv: aws-oidc-env-done
+  aws:region: us-west-2

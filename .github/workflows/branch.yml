@@ -1,4 +1,4 @@
-name: branch
+name: branch-live
 
 on:
   pull_request:
@@ -8,29 +8,42 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  id-token: write
 
 jobs:
   pulumi-preview:
     name: pulumi-preview
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory:
+          - './infra'
+          - './infra/aws-oidc'
+          # - './infra/policy'
     steps:
-      - name: Checkout repository
+      - name: checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: set up node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Dependencies
-        working-directory: ./infra
+      - name: install deps
+        working-directory: ${{ matrix.directory }}
         run: npm install
 
-      - name: Preview the resources
+      - name: auth pulumi cloud
+        uses: pulumi/auth-actions@v1
+        with:
+          organization: pulumi-sandbox-diana
+          requested-token-type: urn:pulumi:token-type:access_token:organization
+        
+      - name: preview stack
         uses: pulumi/actions@v5
         with:
           command: preview
-          stack-name: pulumi-sandbox-diana/cicd-live/dev
+          stack-name: pulumi-sandbox-diana/cicd/dev
           work-dir: ./infra
           comment-on-pr: true
           comment-on-summary: true

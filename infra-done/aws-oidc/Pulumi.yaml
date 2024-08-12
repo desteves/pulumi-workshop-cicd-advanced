@@ -1,0 +1,10 @@
+name: aws-oidc-done
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: A minimal TypeScript Pulumi program to set up AWS OIDC+Pulumi ESC
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: https://github.com/pulumi/examples/tree/master/aws-ts-oidc-provider-pulumi-cloud
