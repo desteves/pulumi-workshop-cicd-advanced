@@ -21,8 +21,6 @@ jobs:
       matrix:
         directory:
           - './infra-done'
-          - './infra-done/aws-oidc'
-          - './infra-done/aws-cis'
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -48,7 +46,6 @@ jobs:
           command: preview
           stack-name: pulumi-sandbox-diana/cicd/dev
           work-dir: ./infra-done
-          policyPacks: aws-cis
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true

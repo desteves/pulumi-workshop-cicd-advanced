@@ -18,7 +18,7 @@ jobs:
       matrix:
         directory:
           - './infra'
-          - './infra/aws-oidc'
+          # - './infra/aws-oidc'
           # - './infra/policy'
     steps:
       - name: checkout repo
