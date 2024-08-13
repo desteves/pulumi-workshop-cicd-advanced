@@ -16,8 +16,8 @@ jobs:
     env:
       INFRA_DIR: './infra'
       NODE_VERSION: 22
-      POLICY_DIR: '/infra/aws-cis'
-      POLICY_PACK: 'aws-cis'
+      # POLICY_DIR: './infra/aws-cis'
+      # POLICY_PACK: 'aws-cis'
       PULUMI_ORG: 'pulumi-sandbox-diana'
       PULUMI_STACK: 'pulumi-sandbox-diana/cicd-live/dev'
     steps:
