@@ -13,14 +13,14 @@ permissions:
 
 jobs:
   pulumi-up:
-    name: pulumi-up
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory:
-          - './infra'
-          # - './infra/aws-oidc'
-          # - './infra/policy'
+    env:
+      INFRA_DIR: './infra'
+      NODE_VERSION: 22
+      POLICY_DIR: '/infra/aws-cis'
+      POLICY_PACK: 'aws-cis'
+      PULUMI_ORG: 'pulumi-sandbox-diana'
+      PULUMI_STACK: 'pulumi-sandbox-diana/cicd-live/dev'
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -28,24 +28,29 @@ jobs:
       - name: set up node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: install deps
-        working-directory: ${{ matrix.directory }}
+      - name: install deps infra
+        working-directory: ${{ env.INFRA_DIR }}
         run: npm install
 
-      - name: auth pulumi cloud
-        uses: pulumi/auth-actions@v1
-        with:
-          organization: pulumi-sandbox-diana
-          requested-token-type: urn:pulumi:token-type:access_token:organization
+      # - name: install deps compliance
+      #   working-directory: ${{ env.POLICY_DIR }}
+      #   run: npm install
+
+      # - name: auth pulumi cloud
+      #   uses: pulumi/auth-actions@v1
+      #   with:
+      #     organization: ${{ env.PULUMI_ORG }}
+      #     requested-token-type: urn:pulumi:token-type:access_token:organization
         
-      - name: crud stack resources
+      - name: crud resources
         uses: pulumi/actions@v5
         with:
           command: up
-          stack-name: pulumi-sandbox-diana/cicd-live/dev
-          work-dir: ./infra
+          stack-name: ${{ env.PULUMI_STACK }}
+          work-dir: ${{ env.INFRA_DIR }}
+          # policyPacks: ${{ env.POLICY_PACK }}
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true

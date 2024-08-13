@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'infra-done/**'
+      - 'infra-done/*'
   workflow_dispatch:
 
 permissions:
@@ -14,14 +14,14 @@ permissions:
 
 jobs:
   pulumi-preview:
-    name: pulumi-preview
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory:
-          - 'infra-done'
-          - 'infra-done/aws-oidc'
-          - 'infra-done/aws-cis'
+    env:
+      INFRA_DIR: './infra-done'
+      NODE_VERSION: 22
+      POLICY_DIR: '/infra-done/aws-cis'
+      POLICY_PACK: 'aws-cis'
+      PULUMI_ORG: 'pulumi-sandbox-diana'
+      PULUMI_STACK: 'pulumi-sandbox-diana/cicd/dev'
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -29,25 +29,29 @@ jobs:
       - name: set up node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: install deps
-        working-directory: ${{ matrix.directory }}
+      - name: install deps infra
+        working-directory: ${{ env.INFRA_DIR }}
+        run: npm install
+
+      - name: install deps compliance
+        working-directory: ${{ env.POLICY_DIR }}
         run: npm install
 
       - name: auth pulumi cloud
         uses: pulumi/auth-actions@v1
         with:
-          organization: pulumi-sandbox-diana
+          organization: ${{ env.PULUMI_ORG }}
           requested-token-type: urn:pulumi:token-type:access_token:organization
         
       - name: preview resources
         uses: pulumi/actions@v5
         with:
           command: preview
-          stack-name: pulumi-sandbox-diana/cicd/dev
-          work-dir: ./infra-done
-          policyPacks: aws-cis
+          stack-name: ${{ env.PULUMI_STACK }}
+          work-dir: ${{ env.INFRA_DIR }}
+          policyPacks: ${{ env.POLICY_PACK }}
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true

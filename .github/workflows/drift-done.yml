@@ -14,13 +14,13 @@ permissions:
   id-token: write
 
 jobs:
-  main:
-    name: drift detection
+  drift-detection:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory:
-          - './infra-done'
+    env:
+      INFRA_DIR: './infra-done'
+      NODE_VERSION: 22
+      PULUMI_ORG: 'pulumi-sandbox-diana'
+      PULUMI_STACK: 'pulumi-sandbox-diana/cicd/dev'
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -28,24 +28,24 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: install deps
-        working-directory: ${{ matrix.directory }}
+        working-directory:  ${{ env.INFRA_DIR }}
         run: npm install
 
       - name: auth pulumi cloud
         uses: pulumi/auth-actions@v1
         with:
-          organization: pulumi-sandbox-diana
+          organization: ${{ env.PULUMI_ORG }}
           requested-token-type: urn:pulumi:token-type:access_token:organization
         
       - name: preview resources
         uses: pulumi/actions@v5
         with:
           command: preview
-          stack-name: pulumi-sandbox-diana/cicd/dev
-          work-dir: ./infra-done
+          stack-name: ${{ env.PULUMI_STACK }}
+          work-dir: ${{ env.INFRA_DIR }}
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true
