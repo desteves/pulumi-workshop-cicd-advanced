@@ -1,11 +1,12 @@
-name: branch-done
-
+name: drift-done
 on:
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - 'infra-done/*'
-  workflow_dispatch:
+  schedule:
+    # Actions schedules runs every 5 minutes.
+    # - cron: '*/5 * * * *'
+
+    # Every 24 hours
+    - cron: '0 0 * * *'
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -13,30 +14,24 @@ permissions:
   id-token: write
 
 jobs:
-  pulumi-preview:
+  drift-detection:
     runs-on: ubuntu-latest
     env:
       INFRA_DIR: './infra-done'
       NODE_VERSION: 22
-      POLICY_DIR: './infra-done/aws-cis'
-      POLICY_PACK: 'aws-cis'
       PULUMI_ORG: 'pulumi-sandbox-diana'
       PULUMI_STACK: 'pulumi-sandbox-diana/cicd/dev'
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
 
-      - name: set up node
+      - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: install deps infra
-        working-directory: ${{ env.INFRA_DIR }}
-        run: npm install
-
-      - name: install deps compliance
-        working-directory: ${{ env.POLICY_DIR }}
+      - name: install deps
+        working-directory:  ${{ env.INFRA_DIR }}
         run: npm install
 
       - name: auth pulumi cloud
@@ -51,7 +46,8 @@ jobs:
           command: preview
           stack-name: ${{ env.PULUMI_STACK }}
           work-dir: ${{ env.INFRA_DIR }}
-          policyPacks: ${{ env.POLICY_PACK }}
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true
+          expect-no-changes: true
+          refresh: true
