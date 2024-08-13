@@ -21,7 +21,7 @@ jobs:
         directory:
           - './infra-done'
           - './infra-done/aws-oidc'
-          # - './infra-done/policy'
+          - './infra-done/aws-cis'
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -41,12 +41,13 @@ jobs:
           organization: pulumi-sandbox-diana
           requested-token-type: urn:pulumi:token-type:access_token:organization
         
-      - name: preview stack
+      - name: preview resources
         uses: pulumi/actions@v5
         with:
           command: preview
           stack-name: pulumi-sandbox-diana/cicd/dev
           work-dir: ./infra-done
+          policyPacks: aws-cis
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true
