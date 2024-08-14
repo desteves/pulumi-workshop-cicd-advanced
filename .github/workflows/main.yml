@@ -17,8 +17,8 @@ jobs:
     env:
       INFRA_DIR: './infra'
       NODE_VERSION: 22
-      # POLICY_DIR: './infra/aws-cis'
-      # POLICY_PACK: 'aws-cis'
+      POLICY_DIR: './infra/aws-cis'
+      POLICY_PACK: 'aws-cis'
       PULUMI_ORG: 'pulumi-sandbox-diana'
       PULUMI_STACK: 'pulumi-sandbox-diana/cicd-live/dev'
     steps:
@@ -34,9 +34,9 @@ jobs:
         working-directory: ${{ env.INFRA_DIR }}
         run: npm install
 
-      # - name: install deps compliance
-      #   working-directory: ${{ env.POLICY_DIR }}
-      #   run: npm install
+      - name: install deps compliance
+        working-directory: ${{ env.POLICY_DIR }}
+        run: npm install
 
       - name: auth pulumi cloud
         uses: pulumi/auth-actions@v1
@@ -50,7 +50,7 @@ jobs:
           command: up
           stack-name: ${{ env.PULUMI_STACK }}
           work-dir: ${{ env.INFRA_DIR }}
-          # policyPacks: ${{ env.POLICY_PACK }}
+          policyPacks: ${{ env.POLICY_PACK }}
           comment-on-pr: true
           comment-on-summary: true
           edit-pr-comment: true
