@@ -2,10 +2,10 @@ name: drift-live
 on:
   schedule:
     # Actions schedules runs every 5 minutes.
-    - cron: '*/5 * * * *'
+    # - cron: '*/5 * * * *'
 
-    # Every 24 hours
-    # - cron: '0 0 * * *'
+    # Every 24 hours, updating for long-term
+    - cron: '0 0 * * *'
   workflow_dispatch: {}
 
 permissions:
